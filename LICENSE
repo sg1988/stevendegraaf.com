@@ -1,0 +1,10 @@
+Copyright (c) 2026 Steven de Graaf. All rights reserved.
+
+The design, text, code and visual concept of this website (stevendegraaf.com)
+may not be copied, reproduced, modified or redistributed, in whole or in part,
+without prior written permission from Steven de Graaf.
+
+Third-party components keep their own licenses:
+- assets/js/three.module.min.js: three.js, MIT License, Copyright 2010-2023 three.js authors
+- assets/fonts/inter-tight-*.woff2: Inter Tight, SIL Open Font License 1.1
+- assets/fonts/jetbrains-mono-*.woff2: JetBrains Mono, SIL Open Font License 1.1

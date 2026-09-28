@@ -154,6 +154,8 @@ section{position:relative}
 .btn .arr{width:40px;height:40px;border-radius:8px;display:grid;place-items:center;background:var(--orange);color:#101718;transition:transform .4s cubic-bezier(.2,.8,.2,1)}
 .btn:hover{background:#fff;color:#101718;border-color:#fff}
 .btn:hover .arr{transform:rotate(-45deg)}
+.btn.ghost .arr{background:transparent;border:1px solid var(--line-d);color:#fff}
+.btn.ghost:hover .arr{color:#101718;border-color:#101718}
 footer{background:#000;padding:32px 0;position:relative;z-index:1}
 footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:#7d8786}
 
