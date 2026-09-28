@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="robots" content="noindex">
+<title>PSI — Pipe Commissioning · Steven de Graaf</title>
+<meta name="description" content="A tiny piping puzzle hidden on stevendegraaf.com.">
+<meta name="theme-color" content="#101718">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="stylesheet" href="../assets/css/play.css">
+<script type="module" src="../assets/js/play.js"></script>
+</head>
+<body class="play">
+<header class="play-top wrap">
+  <a class="mono back" href="../">← stevendegraaf.com</a>
+  <span class="mono kicker">Relief line // easter egg</span>
+</header>
+
+<main class="wrap play-main">
+  <div class="play-head">
+    <h1>PSI<span class="accent">.</span></h1>
+    <p class="play-sub">Pipe commissioning. Rotate the pipes until the medium flows from the supply to the deNOx unit. Tap or click a pipe to turn it 90°.</p>
+  </div>
+
+  <div class="hud mono" aria-live="polite">
+    <span>Line <b id="lvl">01</b></span>
+    <span>Medium <b id="medium">O₃</b></span>
+    <span>Moves <b id="moves">0</b></span>
+    <span>Time <b id="time">0.0</b>s</span>
+    <span>Best <b id="best">—</b></span>
+  </div>
+
+  <div class="rig" id="rig">
+    <div class="port in" id="portIn"><span class="mono" id="inLabel">Supply</span></div>
+    <div class="board" id="board" role="grid" aria-label="Pipe grid"></div>
+    <div class="port out" id="portOut"><span class="mono">deNOx</span></div>
+  </div>
+
+  <div class="done" id="done" hidden>
+    <p class="mono accent">✓ Commissioned</p>
+    <p class="done-line" id="doneLine"></p>
+    <button class="btn" id="next" type="button">Next line<span class="arr" aria-hidden="true">→</span></button>
+  </div>
+
+  <p class="mono play-foot">Built in an afternoon with AI. Engineered with 90° elbows, obviously.</p>
+</main>
+</body>
+</html>

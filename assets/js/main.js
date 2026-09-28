@@ -61,19 +61,27 @@ function onScroll(){
 }
 addEventListener('scroll',onScroll,{passive:true});onScroll();
 
-/* ---------- easter egg: type "psi" ---------- */
+/* ---------- easter egg: type "psi" (or tap the logo 5×) → pressure spike → the game ---------- */
 const toast=document.getElementById('toast');
-let buf='',boost=0;
-addEventListener('keydown',e=>{
-  if(e.key.length!==1) return;
-  buf=(buf+e.key.toLowerCase()).slice(-3);
-  if(buf!=='psi') return;
+let buf='',boost=0,eggFired=false;
+function overpressure(){
+  if(eggFired) return; eggFired=true;
   boost=1;
   if(!reduce) document.body.classList.add('shake');
-  toast.textContent='⚠ Overpressure. Relief valve opened at 12 bar.';toast.classList.add('on');
-  setTimeout(()=>{document.body.classList.remove('shake');toast.classList.remove('on')},3200);
+  toast.textContent='⚠ Overpressure. Opening the relief line…';toast.classList.add('on');
+  setTimeout(()=>{location.href='play/'},1600);
+}
+addEventListener('keydown',e=>{
+  if(e.key.length!==1||e.target.closest('input,textarea')) return;
+  buf=(buf+e.key.toLowerCase()).slice(-3);
+  if(buf==='psi') overpressure();
 });
-console.log('%cHi, curious engineer 👋','font:16px sans-serif;color:#ff5a1f','\nYou found the console. Try typing "psi" on the page.\n— Steven, info@stevendegraaf.com');
+let taps=[];
+document.querySelector('.logo').addEventListener('click',()=>{
+  const now=performance.now();taps=taps.filter(t=>now-t<2500);taps.push(now);
+  if(taps.length>=5) overpressure();
+});
+console.log('%cHi, curious engineer 👋','font:16px sans-serif;color:#ff5a1f','\nYou found the console. Now type "psi" on the page.\n— Steven, info@stevendegraaf.com');
 
 /* ---------- WebGL: pipes → neural network ---------- */
 let renderer;
