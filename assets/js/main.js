@@ -63,16 +63,28 @@ addEventListener('scroll',onScroll,{passive:true});onScroll();
 
 /* ---------- easter egg: type "psi" (or tap the logo 5×) → pressure spike → the game ---------- */
 const toast=document.getElementById('toast');
-let buf='',boost=0,eggFired=false;
+let buf='',boost=0,eggFired=false,pressureStart=0;
+const OP_DURATION=3600;
+// 0 → 1 over the overpressure sequence; the WebGL scene reads this every frame
+const pressure=()=>pressureStart?Math.min(1,(performance.now()-pressureStart)/OP_DURATION):0;
 function overpressure(){
   if(eggFired) return; eggFired=true;
-  boost=1;
-  if(!reduce) document.body.classList.add('shake');
-  toast.textContent='⚠ Overpressure. Opening the relief line…';toast.classList.add('on');
-  setTimeout(()=>{location.href='play/'},1600);
+  pressureStart=performance.now();
+  document.body.classList.add('overpressure');
+  toast.textContent='⚠ Overpressure detected. Opening the relief line…';toast.classList.add('on');
+  const mk=cls=>{const d=document.createElement('div');d.className=cls;document.body.append(d);return d};
+  const vignette=mk('op-vignette'),hud=mk('op-hud mono'),flash=mk('op-flash');
+  (function tick(){
+    const k=pressure();
+    hud.textContent=`P ${(12+k*k*60).toFixed(1)} bar  ·  PSV set @ 12.0 bar`;
+    vignette.style.opacity=String(k);
+    if(k<1){requestAnimationFrame(tick);return}
+    flash.classList.add('on');
+    setTimeout(()=>{location.href='play/'},380);
+  })();
 }
 addEventListener('keydown',e=>{
-  if(e.key.length!==1||e.target.closest('input,textarea')) return;
+  if(!e.key||e.key.length!==1||e.target?.closest?.('input,textarea')) return;
   buf=(buf+e.key.toLowerCase()).slice(-3);
   if(buf==='psi') overpressure();
 });
@@ -137,6 +149,7 @@ function initScene(){
   const pipeMat=new THREE.MeshBasicMaterial({color:0x3b5052,wireframe:true,transparent:true,opacity:.16,depthWrite:false});
   const flangeMat=new THREE.MeshBasicMaterial({color:0x6f8a8c,transparent:true,opacity:.2,depthWrite:false});
   const flangeGeo=new THREE.TorusGeometry(PIPE_R+.08,.07,6,20);
+  const PIPE_COLD=new THREE.Color(0x3b5052),FLANGE_COLD=new THREE.Color(0x6f8a8c),PIPE_HOT=new THREE.Color(0xff2a10);
   const Z=new THREE.Vector3(0,0,1);
   for(let i=0;i<ROUTES;i++){
     const {path,elbows}=makeRoute();
@@ -179,19 +192,24 @@ function initScene(){
   pg.setAttribute('aSeed',new THREE.BufferAttribute(seed,1));
   const pm=new THREE.ShaderMaterial({
     transparent:true,depthWrite:false,blending:THREE.AdditiveBlending,
-    uniforms:{uMix:{value:0},uPR:{value:renderer.getPixelRatio()},uSize:{value:mobile?190:180},uBoost:{value:0},uMouse:{value:new THREE.Vector2(9,9)},uAspect:{value:1}},
-    vertexShader:`attribute float aSeed;uniform float uPR,uSize,uBoost,uAspect;uniform vec2 uMouse;varying float vSeed,vNear;
-      void main(){vSeed=aSeed;vec4 mv=modelViewMatrix*vec4(position,1.);gl_Position=projectionMatrix*mv;
+    uniforms:{uMix:{value:0},uPR:{value:renderer.getPixelRatio()},uSize:{value:mobile?190:180},uBoost:{value:0},uMouse:{value:new THREE.Vector2(9,9)},uAspect:{value:1},uPressure:{value:0},uTime:{value:0}},
+    vertexShader:`attribute float aSeed;uniform float uPR,uSize,uBoost,uAspect,uPressure,uTime;uniform vec2 uMouse;varying float vSeed,vNear;
+      void main(){vSeed=aSeed;
+        // overpressure: particles rattle against the pipe walls
+        vec3 p=position+vec3(sin(uTime*47.+aSeed*91.),cos(uTime*53.+aSeed*37.),sin(uTime*41.+aSeed*13.))*uPressure*uPressure*.4;
+        vec4 mv=modelViewMatrix*vec4(p,1.);gl_Position=projectionMatrix*mv;
         vec2 ndc=gl_Position.xy/gl_Position.w;vec2 d=(ndc-uMouse)*vec2(uAspect,1.);float l=length(d);
         float f=smoothstep(.32,0.,l);vNear=f;
         ndc+=normalize(d+1e-5)/vec2(uAspect,1.)*f*(.1+aSeed*.08);gl_Position.xy=ndc*gl_Position.w;
-        gl_PointSize=uSize*uPR*(.35+aSeed*.9)*(1.+uBoost*.6+f*.8)/-mv.z;}`,
-    fragmentShader:`uniform float uMix,uBoost;varying float vSeed,vNear;
+        gl_PointSize=uSize*uPR*(.35+aSeed*.9)*(1.+uBoost*.6+f*.8+uPressure*1.4)/-mv.z;}`,
+    fragmentShader:`uniform float uMix,uBoost,uPressure;varying float vSeed,vNear;
       void main(){vec2 c=gl_PointCoord-.5;float d=length(c);if(d>.5)discard;float a=smoothstep(.5,0.,d);a*=a;
       vec3 hot=mix(vec3(1.,.35,.12),vec3(1.,.78,.5),step(.9,vSeed));
       vec3 cool=mix(vec3(.3,.55,1.),vec3(.7,.92,1.),step(.85,vSeed));
       vec3 col=mix(hot,cool,uMix);col=mix(col,vec3(1.,.2,.1),uBoost*.6);col=mix(col,vec3(1.,.95,.85),vNear*.5);
-      gl_FragColor=vec4(col,a*(.9+vNear*.6));}`
+      vec3 red=mix(vec3(1.,.1,.04),vec3(1.,.82,.65),step(.82,vSeed)*uPressure);
+      col=mix(col,red,uPressure);
+      gl_FragColor=vec4(col,a*(.9+vNear*.6+uPressure*.6));}`
   });
   world.add(new THREE.Points(pg,pm));
 
@@ -211,10 +229,11 @@ function initScene(){
   (function frame(){
     requestAnimationFrame(frame);
     const dt=Math.min(clock.getDelta(),.05);
-    if(!visible||document.hidden) return;
+    const P=pressure();
+    if((!visible&&!P)||document.hidden) return;
     boost=Math.max(0,boost-dt*.35);
-    time+=dt*(reduce?.15:1)*(1+boost*5);
-    mix+=(mixT-mix)*Math.min(1,dt*3);
+    time+=dt*(reduce?.15:1)*(1+boost*5+P*P*14);
+    mix+=((P?0:mixT)-mix)*Math.min(1,dt*(P?5:3));
     for(let i=0;i<N;i++){
       const t=(t0[i]+time*spd[i])%1;
       const s=routeSamples[pr[i]];const f=t*(SAMPLES-1),k=f|0,fr=f-k,k2=Math.min(k+1,SAMPLES-1);
@@ -228,6 +247,14 @@ function initScene(){
     pm.uniforms.uMix.value=mix;pm.uniforms.uBoost.value=boost;
     pm.uniforms.uMouse.value.lerp(mTarget,Math.min(1,dt*10));pm.uniforms.uAspect.value=innerWidth/innerHeight;
     pipeMat.opacity=.16*(1-mix);flangeMat.opacity=.2*(1-mix);edgeMat.opacity=.18*mix;nodeMat.opacity=.9*mix;
+    pm.uniforms.uPressure.value=P;pm.uniforms.uTime.value=time;
+    if(P){
+      // pipes glow red hot and pulse; the whole rig shakes
+      const pulse=.75+.25*Math.sin(time*6);
+      pipeMat.color.copy(PIPE_COLD).lerp(PIPE_HOT,P);flangeMat.color.copy(FLANGE_COLD).lerp(PIPE_HOT,P);
+      pipeMat.opacity=.16+P*.7*pulse;flangeMat.opacity=.2+P*.8*pulse;
+      if(!reduce){const s=P*P*.9;camera.position.x=(Math.random()-.5)*s;camera.position.y=(Math.random()-.5)*s}
+    }
     world.rotation.y+=((mx*.15+mix*.25)-world.rotation.y)*.04;
     world.rotation.x+=((my*.1-.05)-world.rotation.x)*.04;
     world.position.y=Math.sin(time*.3)*.4;

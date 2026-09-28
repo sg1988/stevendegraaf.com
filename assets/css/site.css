@@ -172,6 +172,14 @@ footer .egg{color:#3d4848;cursor:help}
 .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,120px);z-index:30;background:#fff;color:#101718;padding:12px 18px;border-radius:12px;font-family:var(--mono);font-size:13px;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
 .toast.on{transform:translate(-50%,0)}
 body.shake main{animation:shake .4s linear 4}
+/* overpressure sequence → /play/ */
+body.overpressure main,body.overpressure footer,body.overpressure .nav{opacity:.06;transition:opacity .9s ease;pointer-events:none}
+body.overpressure #gl{z-index:5}
+.op-vignette{position:fixed;inset:0;z-index:6;pointer-events:none;opacity:0;background:radial-gradient(ellipse at center,transparent 35%,rgba(255,40,10,.25) 65%,rgba(255,20,0,.7) 100%)}
+.op-hud{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:7;pointer-events:none;color:#ff4a24;font-size:clamp(14px,2.4vw,22px);letter-spacing:.02em;white-space:nowrap;text-shadow:0 0 18px rgba(255,60,20,.9);animation:opblink .5s steps(2) infinite;background:rgba(16,23,24,.88);border:1px solid rgba(255,60,20,.7);border-radius:12px;padding:14px 20px;box-shadow:0 0 40px rgba(255,40,10,.35)}
+.op-flash{position:fixed;inset:0;z-index:8;pointer-events:none;opacity:0;background:radial-gradient(circle at center,#fff 0%,#ffb08a 35%,#ff3a10 70%,#101718 100%);transition:opacity .35s ease-in}
+.op-flash.on{opacity:1}
+@keyframes opblink{50%{opacity:.55}}
 @keyframes shake{25%{transform:translate(2px,-1px)}50%{transform:translate(-2px,1px)}75%{transform:translate(1px,2px)}}
 
 @media (prefers-reduced-motion:reduce){
