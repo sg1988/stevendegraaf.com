@@ -22,31 +22,44 @@
 
 <main class="wrap play-main">
   <div class="play-head">
-    <h1>PSI<span class="accent">.</span></h1>
-    <p class="play-sub">Pipe commissioning. Rotate the pipes until the medium flows from the supply to the deNOx unit. Tap or click a pipe to turn it 90°.</p>
+    <div>
+      <h1>PSI<span class="accent">.</span></h1>
+      <p class="mono rank" id="rank">Junior Engineer</p>
+    </div>
+    <p class="play-sub">Pipe commissioning. Rotate the pipes until every medium reaches its own consumer. Tap a pipe to turn it 90°. Tap a valve to open or close it.</p>
   </div>
 
   <div class="hud mono" aria-live="polite">
     <span>Line <b id="lvl">01</b></span>
-    <span>Medium <b id="medium">O₃</b></span>
     <span>Moves <b id="moves">0</b></span>
     <span>Time <b id="time">0.0</b>s</span>
     <span>Best <b id="best">—</b></span>
   </div>
 
+  <p class="brief" id="brief" hidden></p>
+
   <div class="rig" id="rig">
-    <div class="port in" id="portIn"><span class="mono" id="inLabel">Supply</span></div>
+    <div class="port in" id="portIn"></div>
     <div class="board" id="board" role="grid" aria-label="Pipe grid"></div>
-    <div class="port out" id="portOut"><span class="mono">deNOx</span></div>
+    <div class="port out" id="portOut"></div>
   </div>
 
+  <div class="status mono" id="status" aria-live="polite"></div>
+
   <div class="done" id="done" hidden>
-    <p class="mono accent">✓ Commissioned</p>
+    <p class="mono" id="doneTitle">✓ Commissioned</p>
     <p class="done-line" id="doneLine"></p>
+    <button class="btn" id="retry" type="button" hidden>Retry line<span class="arr" aria-hidden="true">↺</span></button>
     <button class="btn" id="next" type="button">Next line<span class="arr" aria-hidden="true">→</span></button>
   </div>
 
-  <p class="mono play-foot">Built in an afternoon with AI. Engineered with 90° elbows, obviously.</p>
+  <div class="legend mono">
+    <span><i class="lg check"></i>Check valve: flow only follows the arrow</span>
+    <span><i class="lg gate"></i>Gate valve: tap to open (fixed position)</span>
+    <span><i class="lg leak"></i>Leak: open end</span>
+  </div>
+
+  <p class="mono play-foot"><button class="linkish" id="restart" type="button">Restart from line 01</button> · Built with AI. Engineered with 90° elbows, obviously.</p>
 </main>
 </body>
 </html>
