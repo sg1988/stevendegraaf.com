@@ -17,9 +17,9 @@
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preload" href="assets/fonts/inter-tight-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/site.css?v=3">
 <link rel="modulepreload" href="assets/js/three.module.min.js">
-<script type="module" src="assets/js/main.js"></script>
+<script type="module" src="assets/js/main.js?v=3"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -141,12 +141,43 @@
   </section>
 
   <section class="solid contact" id="contact">
-    <div class="wrap">
-      <span class="mono kicker">[06] Contact</span>
-      <h2 class="split">Let's build<br>what's <em>next.</em></h2>
-      <div class="cta-row rv">
-        <a class="btn" href="mailto:info@stevendegraaf.com">info@stevendegraaf.com<span class="arr" aria-hidden="true">→</span></a>
-        <a class="btn ghost" href="https://www.linkedin.com/in/steven-de-graaf/" target="_blank" rel="noopener noreferrer me">LinkedIn<span class="arr" aria-hidden="true">↗</span></a>
+    <div class="wrap contact-grid">
+      <div>
+        <span class="mono kicker">[06] Contact</span>
+        <h2 class="split">Let's build<br>what's <em>next.</em></h2>
+        <div class="cta-row rv">
+          <a class="btn" href="mailto:info@stevendegraaf.com">info@stevendegraaf.com<span class="arr" aria-hidden="true">→</span></a>
+          <a class="btn ghost" href="https://www.linkedin.com/in/steven-de-graaf/" target="_blank" rel="noopener noreferrer me">LinkedIn<span class="arr" aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+
+      <!-- relief valve: press and hold the handwheel → overpressure → the game -->
+      <div class="psv rv" id="psv">
+        <div class="psv-head mono"><span>PSV-01 · Relief line</span><span class="psv-state" id="psvState">Locked out</span></div>
+        <svg class="psv-gauge" viewBox="0 0 200 146" aria-hidden="true">
+          <path class="g-track" d="M20 104A80 80 0 0 1 180 104"/>
+          <path class="g-red" d="M156.6 47.4A80 80 0 0 1 180 104"/>
+          <g id="psvTicks"></g>
+          <g id="psvNeedle" class="g-needle"><path d="M100 104L100 36"/><circle cx="100" cy="104" r="7"/></g>
+          <text x="100" y="134" class="g-val" id="psvVal">6.0</text>
+          <text x="100" y="146" class="g-unit">bar · set 12.0</text>
+        </svg>
+        <div class="psv-body">
+          <button class="psv-wheel" id="psvWheel" type="button" aria-label="Relief valve handwheel. Press and hold to open. Probably don't.">
+            <svg viewBox="0 0 120 120" aria-hidden="true">
+              <circle class="w-rim" cx="60" cy="60" r="50"/>
+              <circle class="w-rim-hi" cx="60" cy="60" r="50"/>
+              <path class="w-spoke" d="M60 60V12M60 60L105.6 45.2M60 60L88.2 98.8M60 60L31.8 98.8M60 60L14.4 45.2"/>
+              <circle class="w-hub" cx="60" cy="60" r="11"/>
+              <circle class="w-knob" cx="60" cy="12" r="5"/>
+            </svg>
+          </button>
+          <div class="loto" aria-hidden="true">
+            <i class="loto-string"></i>
+            <div class="loto-tag"><span class="loto-band">Danger</span><b>Do not operate</b><small>Locked out by<br>S. de Graaf</small></div>
+          </div>
+        </div>
+        <p class="psv-hint mono" id="psvHint">Press and hold the handwheel. Or don't.</p>
       </div>
     </div>
   </section>

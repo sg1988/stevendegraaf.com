@@ -88,6 +88,58 @@ addEventListener('keydown',e=>{
   buf=(buf+e.key.toLowerCase()).slice(-3);
   if(buf==='psi') overpressure();
 });
+/* relief valve widget: press and hold the handwheel to open PSV-01 */
+(function(){
+  const psv=document.getElementById('psv');if(!psv) return;
+  const wheel=document.getElementById('psvWheel'),needle=document.getElementById('psvNeedle');
+  const val=document.getElementById('psvVal'),state=document.getElementById('psvState'),hint=document.getElementById('psvHint');
+  const ticks=document.getElementById('psvTicks'),NS='http://www.w3.org/2000/svg';
+  // gauge scale 0–16 bar over a 180° arc
+  for(let i=0;i<=16;i++){
+    const a=Math.PI*(1-i/16),r1=i%4?72:68,r2=80;
+    const l=document.createElementNS(NS,'line');
+    l.setAttribute('x1',100+Math.cos(a)*r1);l.setAttribute('y1',104-Math.sin(a)*r1);
+    l.setAttribute('x2',100+Math.cos(a)*r2);l.setAttribute('y2',104-Math.sin(a)*r2);
+    l.setAttribute('class','g-tick'+(i%4?'':' major'));ticks.append(l);
+  }
+  const HOLD=2.2,REST=6; // seconds to open, resting pressure in bar
+  const QUIPS=['Wise choice.','Permit to work required.','Pressure released. Good call.','Safety first. Respect.','Almost. Commit or walk away.'];
+  let k=0,holding=false,last=0,spin=0,raf=0,quip=0;
+  const draw=()=>{
+    const bar=REST+k*(16-REST);
+    needle.style.transform=`rotate(${-90+bar/16*180}deg)`;needle.style.transformOrigin='100px 104px';
+    val.textContent=bar.toFixed(1);
+    wheel.firstElementChild.style.transform=`rotate(${spin}deg)`;
+    psv.style.setProperty('--glow',Math.max(0,(k-.4)/.6).toFixed(3));
+    const hot=bar>12;psv.classList.toggle('hot',hot);psv.classList.toggle('shake',hot&&!reduce);
+    state.textContent=k>0?(hot?'Overpressure':'Opening…'):'Locked out';
+  };
+  const loop=t=>{
+    const dt=Math.min(.05,(t-last)/1000);last=t;
+    if(holding){k=Math.min(1,k+dt/HOLD);spin+=dt*(260+k*520)}
+    else k=Math.max(0,k-dt*.9);
+    draw();
+    if(k>=1){holding=false;hint.textContent='Relief line open. Brace yourself.';overpressure();return}
+    if(holding||k>0) raf=requestAnimationFrame(loop); else raf=0;
+  };
+  const press=e=>{
+    if(eggFired) return;
+    if(e.type==='pointerdown'){wheel.setPointerCapture?.(e.pointerId);e.preventDefault()}
+    holding=true;hint.textContent='Keep holding…';
+    if(!raf){last=performance.now();raf=requestAnimationFrame(loop)}
+  };
+  const release=()=>{
+    if(!holding) return;holding=false;
+    if(k>.08&&k<1) hint.textContent=QUIPS[quip++%QUIPS.length];
+  };
+  wheel.addEventListener('pointerdown',press);
+  ['pointerup','pointercancel','lostpointercapture'].forEach(ev=>wheel.addEventListener(ev,release));
+  wheel.addEventListener('contextmenu',e=>e.preventDefault());
+  wheel.addEventListener('keydown',e=>{if((e.key===' '||e.key==='Enter')&&!e.repeat){e.preventDefault();press(e)}});
+  wheel.addEventListener('keyup',e=>{if(e.key===' '||e.key==='Enter') release()});
+  draw();
+})();
+
 let taps=[];
 document.querySelector('.logo').addEventListener('click',()=>{
   const now=performance.now();taps=taps.filter(t=>now-t<2500);taps.push(now);
