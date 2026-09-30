@@ -301,9 +301,12 @@ if(location.hash==='#dev') window.psiDev={
       if(t.type==='gate') t.open=true;
       else {t.r+=((t.sol-t.r)%4+4)%4;t.svg.style.transform=`rotate(${t.r*90}deg)`}
     }));
-    return evaluate().solved;
+    if(!t0) t0=performance.now();
+    const ok=paint();
+    if(ok&&!over) win();
+    return ok;
   },
-  jump(l){level=l;build()},
+  jump(line){level=Math.max(0,(line|0)-1);build()},
 };
 
 build();
