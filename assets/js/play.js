@@ -284,8 +284,8 @@ function win(){
 function fail(){
   finish();
   done.classList.add('fail');
-  $('doneTitle').textContent='✕ Budget exhausted';
-  $('doneLine').textContent='The relief valve lifted before the line was commissioned. Same line, fresh start.';
+  $('doneTitle').textContent='✕ Too many moves';
+  $('doneLine').textContent='Out of budget. Same line, fresh start.';
   $('retry').hidden=false;$('next').hidden=true;
   done.hidden=false;$('retry').focus({preventScroll:true});
 }
