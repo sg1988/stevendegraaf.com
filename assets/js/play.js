@@ -46,7 +46,7 @@ const store={get(k){try{return localStorage.getItem(k)}catch{return null}},set(k
 const cfgFor=l=>{const c=LEVELS[Math.min(l,LEVELS.length-1)];return l<LEVELS.length?c:{...c,budget:Math.max(2,c.budget-(l-LEVELS.length+1)),brief:null}};
 
 let level=Math.max(0,+(store.get('psi-level')||0)|0);
-let cfg,cols,rows,grid,media,snapshot,moves,budget,t0,timer,over;
+let cfg,cols,rows,grid,media,snapshot,moves,budget,t0,timer,over,cheated=false;
 
 /* ---------- level generation ---------- */
 function carve(used,startRow,minLen,maxLen){
@@ -128,7 +128,7 @@ function build(){
   if(evaluate().solved) build(); // never hand out a solved board
 }
 function start(){
-  moves=0;over=false;clearInterval(timer);timer=null;t0=0;
+  moves=0;over=false;cheated=false;clearInterval(timer);timer=null;t0=0;
   render();
 }
 function retry(){
@@ -271,7 +271,7 @@ function finish(){over=true;clearInterval(timer)}
 function win(){
   finish();
   const secs=((performance.now()-t0)/1000).toFixed(1);
-  const key='psi-best-'+level,best=store.get(key),record=!best||+secs<+best;
+  const key='psi-best-'+level,best=store.get(key),record=!cheated&&(!best||+secs<+best);
   if(record) store.set(key,secs);
   store.set('psi-level',String(level+1));
   rig.classList.add('won');
@@ -301,7 +301,7 @@ if(location.hash==='#dev') window.psiDev={
       if(t.type==='gate') t.open=true;
       else {t.r+=((t.sol-t.r)%4+4)%4;t.svg.style.transform=`rotate(${t.r*90}deg)`}
     }));
-    if(!t0) t0=performance.now();
+    cheated=true;if(!t0) t0=performance.now();
     const ok=paint();
     if(ok&&!over) win();
     return ok;
