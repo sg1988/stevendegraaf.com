@@ -11,8 +11,8 @@
 <meta name="theme-color" content="#101718">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../assets/css/site.css?v=3">
-<link rel="stylesheet" href="../assets/css/play.css?v=3">
-<script type="module" src="../assets/js/play.js?v=6"></script>
+<link rel="stylesheet" href="../assets/css/play.css?v=8">
+<script type="module" src="../assets/js/play.js?v=8"></script>
 </head>
 <body class="play">
 <header class="play-top wrap">
@@ -34,14 +34,17 @@
     <span>Moves <b id="moves">0</b></span>
     <span>Time <b id="time">0.0</b>s</span>
     <span>Best <b id="best">—</b></span>
+    <button class="testbtn" id="test" type="button" hidden>Pressure test <b id="tests">3</b></button>
   </div>
 
   <p class="brief" id="brief" hidden></p>
 
   <div class="rig" id="rig">
-    <div class="port in" id="portIn"></div>
+    <div class="port pN" id="portN"></div>
+    <div class="port pW" id="portW"></div>
     <div class="board" id="board" role="grid" aria-label="Pipe grid"></div>
-    <div class="port out" id="portOut"></div>
+    <div class="port pE" id="portE"></div>
+    <div class="port pS" id="portS"></div>
   </div>
 
   <div class="status mono" id="status" aria-live="polite"></div>
@@ -57,6 +60,7 @@
     <span><i class="lg check"></i>Check valve: flow only follows the arrow</span>
     <span><i class="lg gate"></i>Gate valve: tap to open (fixed position)</span>
     <span><i class="lg leak"></i>Leak: open end</span>
+    <span><i class="lg src"></i>Supply · <i class="lg snk"></i>Consumer (any edge)</span>
   </div>
 
   <p class="mono play-foot"><button class="linkish" id="restart" type="button">Restart from line 01</button> · Built with AI. Engineered with 90° elbows, obviously.</p>
