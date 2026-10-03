@@ -103,7 +103,7 @@ addEventListener('keydown',e=>{
     l.setAttribute('class','g-tick'+(i%4?'':' major'));ticks.append(l);
   }
   const HOLD=2.2,REST=6; // seconds to open, resting pressure in bar
-  const QUIPS=['Wise choice.','Permit to work required.','Pressure released. Good call.','Safety first. Respect.','Almost. Commit or walk away.'];
+  const QUIPS=['Wise choice.','Permit-to-work required.','Pressure released. Good call.','Safety first. Respect.','Almost. Commit or walk away.'];
   let k=0,holding=false,last=0,spin=0,raf=0,quip=0;
   const draw=()=>{
     const bar=REST+k*(16-REST);

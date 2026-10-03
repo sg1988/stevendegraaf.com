@@ -31,9 +31,9 @@ const LEVELS=[
   {size:[5,4],media:['O3'],bends:2},
   {size:[6,4],media:['O2'],bends:3,edges:true,brief:'<b>New: connections on every side.</b> Supplies and consumers can sit on any edge of the rack now.'},
   {size:[6,5],media:['N2'],bends:4,edges:true,check:1,brief:'<b>New: check valves.</b> Flow only passes in the direction of the arrow. Turn them the right way round.'},
-  {size:[6,5],media:['H2O'],bends:5,edges:true,check:2,gate:1,slack:8,brief:'<b>New: gate valves and a move budget.</b> Gate valves are fixed and start closed: tap to open. There is room for a few misclicks, not for guessing.'},
+  {size:[6,5],media:['H2O'],bends:5,edges:true,check:2,gate:1,slack:8,brief:'<b>New: gate valves and a move budget.</b> Gate valves are fixed in place and start closed: tap one to open it. There is room for a few misclicks, but not for guessing.'},
   {size:[7,5],media:['O2','N2'],bends:3,edges:true,check:2,gate:1,slack:8,brief:'<b>New: two media.</b> Oxygen and nitrogen each go to their own consumer. If they touch, the line is rejected.'},
-  {size:[7,6],media:['O2','N2'],bends:4,edges:true,check:2,gate:2,slack:8,leak:true,brief:'<b>New: leak test.</b> Every pipe that carries flow must be closed off. No open ends, no dead T-branches.'},
+  {size:[7,6],media:['O2','N2'],bends:4,edges:true,check:2,gate:2,slack:8,leak:true,brief:'<b>New: leak test.</b> Every pipe that carries flow must be closed off. No open ends, no dead-end T-branches.'},
   {size:[8,6],media:['O2','N2'],bends:5,edges:true,check:3,gate:2,slack:8,leak:true,pressure:true,brief:'<b>New: pressure drop.</b> Every elbow and valve costs pressure. Consumers need a minimum pressure, so no detours.'},
   {size:[8,6],media:THREE,bends:3,edges:true,check:3,gate:2,slack:9,leak:true,pressure:true,brief:'<b>New: hydraulic oil at 210 bar.</b> Three media, one rack. Welcome to the big leagues.'},
   {size:[8,7],media:THREE,bends:4,edges:true,check:4,gate:3,slack:8,leak:true,pressure:true},
@@ -346,7 +346,7 @@ function win(){
   rig.classList.add('won');rig.classList.remove('blind');
   const next=rankFor(level+1),promo=next!==rankFor(level);
   $('doneTitle').textContent='✓ Commissioned';
-  $('doneLine').textContent=`Line ${level+1} online in ${secs}s and ${moves} moves.${record?' New personal best.':''}${promo?` Promoted to ${next}!`:''}`;
+  $('doneLine').textContent=`Line ${level+1} online in ${secs}s and ${moves} ${moves===1?'move':'moves'}.${record?' New personal best.':''}${promo?` Promoted to ${next}!`:''}`;
   $('retry').hidden=true;$('next').hidden=false;
   done.hidden=false;$('next').focus({preventScroll:true});
 }
